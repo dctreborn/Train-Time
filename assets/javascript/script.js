@@ -14,14 +14,19 @@ var database = firebase.database();
 $("#submit-btn").on("click", function(event){
 	event.preventDefault();
 
+	//variables to be stored and put into table
 	var trainName = $("#train-name").val().trim();
 	var destination = $("#destination").val().trim();
 	var firstTime = $("#first-time").val().trim();
 	var freq = $("#frequency").val().trim();
-
 	var arrival;
 	var minutesAway;
 
+	//convert current and firstTime to military
+	var currentTime = moment().format("hh:mm");
+	firstTime = moment(firstTime).format("hh:mm");
+
+	//variables in array to be looped
 	var array = [
 		trainName,
 		destination,
@@ -32,13 +37,14 @@ $("#submit-btn").on("click", function(event){
 	];
 
 	var length = arrival.length;
+	/* move to child_added
 	var newRow = $("<tr>");
-
+	//loop to create table entry
 	for (var i = 0; i < length; i++) {
 		var newCol = $("<td>");
 		newCol.text(array[i]);
 		newRow.append(newCol);
-	}
+	}*/
 
 	//firebase push data
 	database.ref().push({
