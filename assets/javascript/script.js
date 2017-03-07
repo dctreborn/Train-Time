@@ -13,18 +13,28 @@ var database = firebase.database();
 //pass values to database on click
 $("#submit-btn").on("click", function(event){
 	event.preventDefault();
-
 	//variables to be stored and put into table
 	var trainName = $("#train-name").val().trim();
+	console.log("name: " + trainName);
 	var destination = $("#destination").val().trim();
+	console.log("destination: " + destination);
 	var firstTime = $("#first-time").val().trim();
+	console.log("first time: " + firstTime);
 	var freq = $("#frequency").val().trim();
+	console.log("frequency: " + freq);
 	var arrival;
 	var minutesAway;
 
-	//convert current and firstTime to military
-	var currentTime = moment().format("hh:mm");
-	firstTime = moment(firstTime).format("hh:mm");
+	//convert first time to military
+	firstTime = moment(firstTime, "hh:mm").subtract(1, "day");
+	//calculate difference from first time to now
+	var timeDiff = moment().diff(firstTime, "minutes");
+	//get remaining time to next train
+	var timeRemainder = timeDiff % freq;
+	//get time in minutes of next train
+	minutesAway = freq - timeRemainder;
+	//get actual time of next train
+	arrival = moment().add(minutesAway, "minutes").format("hh:mm");
 
 	//variables in array to be looped
 	var array = [
@@ -46,15 +56,15 @@ $("#submit-btn").on("click", function(event){
 		newRow.append(newCol);
 	}*/
 
-	//firebase push data
+	/*firebase push data
 	database.ref().push({
 		trainName: trainName,
 		destination: destination,
 		firstTime: firstTime,
-		freq: frequency,
+		freq: freq,
 		arrival: arrival,
 		minutes: minutesAway
-	});
+	});*/
 });
 
 //call values from database and add to table on push
