@@ -36,6 +36,29 @@ $("#submit-btn").on("click", function(event){
 	//get actual time of next train
 	arrival = moment().add(minutesAway, "minutes").format("hh:mm");
 
+	firebase push data
+	database.ref().push({
+		trainName: trainName,
+		destination: destination,
+		firstTime: firstTime,
+		freq: freq,
+		arrival: arrival,
+		minutes: minutesAway
+	});
+});
+
+//call values from database and add to table on initial load
+database.ref().on("child_added", function(snapshot){
+	var db = snapshot.val();
+
+
+	var trainName = db.trainName;
+	var destination = db.destination;
+	var firstTime = db.firstTime;
+	var freq = db.freq;
+	var arrival = db.arrival;
+	var minutesAway = db.minutes;
+
 	//variables in array to be looped
 	var array = [
 		trainName,
@@ -46,28 +69,13 @@ $("#submit-btn").on("click", function(event){
 		minutesAway
 	];
 
+
 	var length = arrival.length;
-	/* move to child_added
 	var newRow = $("<tr>");
 	//loop to create table entry
 	for (var i = 0; i < length; i++) {
 		var newCol = $("<td>");
 		newCol.text(array[i]);
 		newRow.append(newCol);
-	}*/
-
-	/*firebase push data
-	database.ref().push({
-		trainName: trainName,
-		destination: destination,
-		firstTime: firstTime,
-		freq: freq,
-		arrival: arrival,
-		minutes: minutesAway
-	});*/
-});
-
-//call values from database and add to table on push
-database.ref().on("child_added", function(snapshot){
-
+	}
 });
