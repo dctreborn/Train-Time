@@ -26,17 +26,17 @@ $("#submit-btn").on("click", function(event){
 	var minutesAway;
 
 	//convert first time to military
-	firstTime = moment(firstTime, "hh:mm").subtract(1, "day");
+	var convertedTime = moment(firstTime, "HH:mm").subtract(1, "day");
 	//calculate difference from first time to now
-	var timeDiff = moment().diff(firstTime, "minutes");
+	var timeDiff = moment().diff(convertedTime, "minutes");
 	//get remaining time to next train
 	var timeRemainder = timeDiff % freq;
 	//get time in minutes of next train
 	minutesAway = freq - timeRemainder;
 	//get actual time of next train
-	arrival = moment().add(minutesAway, "minutes").format("hh:mm");
+	arrival = moment().add(minutesAway, "minutes").format("HH:mm");
 
-	firebase push data
+	//firebase push data
 	database.ref().push({
 		trainName: trainName,
 		destination: destination,
@@ -58,6 +58,7 @@ database.ref().on("child_added", function(snapshot){
 	var freq = db.freq;
 	var arrival = db.arrival;
 	var minutesAway = db.minutes;
+	console.log("minutes: " + minutesAway);
 
 	//variables in array to be looped
 	var array = [
@@ -69,13 +70,13 @@ database.ref().on("child_added", function(snapshot){
 		minutesAway
 	];
 
-
-	var length = arrival.length;
+	var length = array.length;
 	var newRow = $("<tr>");
 	//loop to create table entry
 	for (var i = 0; i < length; i++) {
 		var newCol = $("<td>");
 		newCol.text(array[i]);
 		newRow.append(newCol);
+		$("#train-table").append(newRow);
 	}
 });
