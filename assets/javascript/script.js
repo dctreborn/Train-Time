@@ -13,38 +13,53 @@ var database = firebase.database();
 //pass values to database on click
 $("#submit-btn").on("click", function(event){
 	event.preventDefault();
-	//variables to be stored and put into table
-	var trainName = $("#train-name").val().trim();
-	console.log("name: " + trainName);
-	var destination = $("#destination").val().trim();
-	console.log("destination: " + destination);
-	var firstTime = $("#first-time").val().trim();
+
+	//removes : in time format
+	var firstTime = $("#first-time").val().trim().replace(/(\:)/g, "");
 	console.log("first time: " + firstTime);
 	var freq = $("#frequency").val().trim();
-	console.log("frequency: " + freq);
-	var arrival;
-	var minutesAway;
 
-	//convert first time to military
-	var convertedTime = moment(firstTime, "HH:mm").subtract(1, "day");
-	//calculate difference from first time to now
-	var timeDiff = moment().diff(convertedTime, "minutes");
-	//get remaining time to next train
-	var timeRemainder = timeDiff % freq;
-	//get time in minutes of next train
-	minutesAway = freq - timeRemainder;
-	//get actual time of next train
-	arrival = moment().add(minutesAway, "minutes").format("HH:mm");
+	if ($.isNumeric(firstTime) && $.isNumeric(freq)){
+		//rebuild time format to HH:mm
+		firstTime = firstTime.slice(0,2) + ":" + firstTime.slice(2,4);
+		console.log("first time: " + firstTime);
+		//variables to be stored and put into table
+		var trainName = $("#train-name").val().trim();
+		var destination = $("#destination").val().trim();
 
-	//firebase push data
-	database.ref().push({
-		trainName: trainName,
-		destination: destination,
-		firstTime: firstTime,
-		freq: freq,
-		arrival: arrival,
-		minutes: minutesAway
-	});
+		var arrival;
+		var minutesAway;
+
+		//convert first time to military
+		var convertedTime = moment(firstTime, "HH:mm").subtract(1, "day");
+		//calculate difference from first time to now
+		var timeDiff = moment().diff(convertedTime, "minutes");
+		//get remaining time to next train
+		var timeRemainder = timeDiff % freq;
+		//get time in minutes of next train
+		minutesAway = freq - timeRemainder;
+		//get actual time of next train
+		arrival = moment().add(minutesAway, "minutes").format("HH:mm");
+
+		//firebase push data
+		database.ref().push({
+			trainName: trainName,
+			destination: destination,
+			firstTime: firstTime,
+			freq: freq,
+			arrival: arrival,
+			minutes: minutesAway
+		});
+
+		//reset input values
+		$("#train-name").val("");
+		$("#destination").val("");
+		$("#first-time").val("");
+		$("#frequency").val("");
+	}
+	else {
+		//data verification entries
+	}
 });
 
 //call values from database and add to table on initial load
@@ -58,7 +73,6 @@ database.ref().on("child_added", function(snapshot){
 	var freq = db.freq;
 	var arrival = db.arrival;
 	var minutesAway = db.minutes;
-	console.log("minutes: " + minutesAway);
 
 	//variables in array to be looped
 	var array = [
