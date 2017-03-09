@@ -16,13 +16,13 @@ $("#submit-btn").on("click", function(event){
 
 	//removes : in time format
 	var firstTime = $("#first-time").val().trim().replace(/(\:)/g, "");
-	console.log("first time: " + firstTime);
 	var freq = $("#frequency").val().trim();
+	var numericTime = $.isNumeric(firstTime);
+	var numericFreq = $.isNumeric(freq);
 
-	if ($.isNumeric(firstTime) && $.isNumeric(freq)){
+	if (numericTime && numericFreq){
 		//rebuild time format to HH:mm
 		firstTime = firstTime.slice(0,2) + ":" + firstTime.slice(2,4);
-		console.log("first time: " + firstTime);
 		//variables to be stored and put into table
 		var trainName = $("#train-name").val().trim();
 		var destination = $("#destination").val().trim();
@@ -59,6 +59,12 @@ $("#submit-btn").on("click", function(event){
 	}
 	else {
 		//data verification entries
+		if (numericFreq == false) {
+			$("#frequency").val("").attr("placeholder","Please enter a number.");
+		}
+		if (numericTime == false) {
+			$("#first-time").val("").attr("placeholder","Please enter a time.");
+		}
 	}
 });
 
